@@ -4,15 +4,17 @@ services:
     container_name: init-kafka
     image: confluentinc/cp-kafka:6.1.1
     entrypoint: ['/bin/sh', '-c']
-    command: >
-      echo "Connecting to Kafka at $${KAFKA_SERVER}" &&
-      kafka-topics --bootstrap-server $${KAFKA_SERVER} --list &&
-      echo 'Creating kafka topics' &&
-      kafka-topics --bootstrap-server $${KAFKA_SERVER} --create --if-not-exists --topic __consumer_offsets --replication-factor 3 --partitions 50 &&
-      kafka-topics --bootstrap-server $${KAFKA_SERVER} --create --if-not-exists --topic query --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000 &&
-      kafka-topics --bootstrap-server $${KAFKA_SERVER} --create --if-not-exists --topic p_arrival --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000 &&
-      kafka-topics --bootstrap-server $${KAFKA_SERVER} --create --if-not-exists --topic pick --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000 &&
-      echo 'Successfully created the following topics:' &&
-      kafka-topics --bootstrap-server $${KAFKA_SERVER} --list
+    command: |
+      "
+      # Blocks until Kafka is reachable
+      kafka-topics --bootstrap-server $$KAFKA_SERVER --list
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server $$KAFKA_SERVER --create --if-not-exists --topic __consumer_offsets --replication-factor 3 --partitions 50
+      kafka-topics --bootstrap-server $$KAFKA_SERVER --create --if-not-exists --topic query --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000
+      kafka-topics --bootstrap-server $$KAFKA_SERVER --create --if-not-exists --topic p_arrival --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000
+      kafka-topics --bootstrap-server $$KAFKA_SERVER --create --if-not-exists --topic pick --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server $$KAFKA_SERVER --list
+      "
     environment:
       KAFKA_SERVER: <ip-kafka>:<port-kafka>
