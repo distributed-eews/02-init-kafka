@@ -1,0 +1,18 @@
+version: '3'
+services:
+  init-kafka:
+    container_name: init-kafka
+    image: confluentinc/cp-kafka:6.1.1
+    entrypoint: ['/bin/sh', '-c']
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --list
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --create --if-not-exists --topic __consumer_offsets --replication-factor 3 --partitions 50
+      kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --create --if-not-exists --topic query --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000
+      kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --create --if-not-exists --topic p_arrival --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000
+      kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --create --if-not-exists --topic pick --replication-factor 3 --partitions 3 --config segment.bytes=150000 --config retention.bytes=3000000 --config retention.ms=120000
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --list
+      "
