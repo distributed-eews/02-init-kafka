@@ -7,8 +7,6 @@ services:
     command: |
       "
       # Mendefinisikan variabel untuk IP dan port Kafka
-      KAFKA_IP="<ip-kafka>"
-      KAFKA_PORT="<port-kafka>"
       KAFKA_SERVER="${KAFKA_IP}:${KAFKA_PORT}"
 
       # Blocks until Kafka is reachable
@@ -21,3 +19,6 @@ services:
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server $KAFKA_SERVER --list
       "
+    environment:
+      KAFKA_IP: '<ip-kafka>'
+      KAFKA_PORT: '<port-kafka>'
