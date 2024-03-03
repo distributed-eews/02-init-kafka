@@ -46,3 +46,7 @@ kafka-topics --bootstrap-server <ip-kafka>:<port-kafka> --list
 ```
 
 Gantikan `<ip-kafka>` dan `<port-kafka>` dengan nilai yang sesuai untuk cluster Kafka Anda.
+
+## Catatan
+
+- Program ini bisa dijalankan di komputer local tidak perlu di VM
